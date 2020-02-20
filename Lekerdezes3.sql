@@ -1,21 +1,17 @@
 1.	Átlagosan hányszor mentek házhoz a futárok?
-
-select count(rendeles.razon)/(select count(futar.)
-
-->4.20.
+Select (SELECT COUNT(razon) from rendeles) / (SELECT COUNT(fazon) FROM futar);
+->4.21.
 	
 2.	Mely futárok mentek többet házhoz az átlagosnál?
-
-
+SELECT fnev from futar INNER JOIN rendeles ON rendeles.fazon = futar.fazon Group by futar.fnev HAVING COUNT(razon) > (Select (SELECT COUNT(razon) from rendeles) / (SELECT COUNT(fazon) FROM futar));
 
 -> Gyalogkakukk 9
 
-3.	Átlagosan hány pizzát rendeltek a vevõk?
-select sum(db)/
-átlagos rendelés: 8.8571
+3.	Átlagosan hány pizzát rendelek a vevõk?
+SELECT (SELECT Sum(tetel.db) FROM tetel) / (SELECT COUNT(vazon) from vevo);
 
 4.	Kik rendeltek több pizzát, mint egy átlagos vevõ?
-
+SELECT vevo.vnev from vevo INNER JOIN rendeles on rendeles.vazon = vevo.vazon INNER JOIN tetel ON tetel.razon = rendeles.razon GROUP BY vevo.vnev HAVING SUM(db) > (SELECT (SELECT Sum(tetel.db) FROM tetel) / (SELECT COUNT(vazon) from vevo));
 Kuka (14)
 Morgó (9)
 Szende (9)

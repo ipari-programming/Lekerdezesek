@@ -1,35 +1,37 @@
 1.	Hogy hívják az egyes pizzafutárokat? Névsorba rendezve jelenítsd meg!
-	select fnev from futar order by fnev;
-2.	Milyen pizzák közül lehet rendelni, és mennyibe kerülnek? Ár szerint növekvő sorrendbe rendezve!
-	select pnev, par from pizza order by par;
+SELECT futar.fnev FROM futar ORDER BY futar.fnev;
+2.	Milyen pizzák közül lehet rendelni, és mennyibe kerülnek? Ár szerint növekvõ sorrendbe rendezve!
+SELECT pizza.pnev, pizza.par FROM pizza ORDER BY pizza.par;
 3.	Mennyibe kerül átlagosan egy pizza?
+SELECT AVG(pizza.par) FROM pizza;
 	(1218)
-	select avg(par) from pizza;
 4.	Mely pizzák olcsóbbak 1000 Ft-nál?
-	select pnev from pizza where par<1000;
-5.	Ki szállította házhoz az első (egyes sorszámú) rendelést?
-	select fnev from futar inner join rendeles on futar.fazon=rendeles.fazon order by ido limit 1;
-6.	Kik rendeltek pizzát délelőtt?
-	select vnev from vevo inner join rendeles on vevo.vazon=rendeles.vazon where ido < "12:00:00"; 
+SELECT pizza.pnev FROM pizza WHERE pizza.par < 1000;
+5.	Ki szállította házhoz az elsõ (egyes sorszámú) rendelést?
+SELECT futar.fnev FROM futar INNER JOIN rendeles ON futar.fazon = rendeles.fazon WHERE razon = 1; 
+6.	Kik rendeltek pizzát délelõtt?
+SELECT vevo.vnev FROM vevo INNER JOIN rendeles ON vevo.vazon = rendeles.vazon WHERE rendeles.ido < '12:00:00';
 7.	Milyen pizzákat evett Szundi?
+SELECT pizza.pnev FROM rendeles INNER JOIN tetel ON rendeles.razon = tetel.razon INNER JOIN pizza ON pizza.pazon = tetel.pazon INNER JOIN vevo ON rendeles.vazon = vevo.vazon WHERE vevo.vnev = 'Szundi';
 	(Karib..., Húsimádó, Son.go.ku)
-	select pnev from pizza inner join tetel on pizza.pazon=tetel.pazon inner join rendeles on rendeles.razon=tetel.tazon inner join vevo on vevo.vazon=rendeles.vazon where vnev="Szundi";
 8.	Ki szállított házhoz Tudornak?
+SELECT futar.fnev FROM futar INNER JOIN rendeles ON futar.fazon = rendeles.fazon INNER JOIN vevo ON rendeles.vazon = vevo.vazon WHERE vevo.vnev = 'Tudor';
 	(Gyalogkakukk,
 	Imperial)
-	select fnev from futar inner join rendeles on rendeles.razon=vevo.vazon inner join futar on futar.fazon=rendeles.fazon where vnev="Tudor";
 9.	Az egyes rendelések alkalmával, ki kinek szállított házhoz?
-
+SELECT futar.fnev, vevo.vnev FROM rendeles INNER JOIN vevo ON vevo.vazon = rendeles.vazon INNER JOIN futar ON futar.fazon = rendeles.fazon;
 10.	Mennyit költött pizzára Morgó?
+SELECT SUM(pizza.par * tetel.db) FROM pizza INNER JOIN tetel ON pizza.pazon = tetel.pazon INNER JOIN rendeles ON rendeles.razon = tetel.razon INNER JOIN vevo ON vevo.vazon = rendeles.vazon WHERE vevo.vnev = 'Morgó';
 	(12000)
-	select sum(pizza.par * tetel.db) from pizza inner join tetel on pizza.pazon=tetel.pazon inner join rendeles on tetel.razon=rendeles.razon inner join vevo on vevo.vazon=rendeles.vazon where vnev="Morgó";
 11.	Hány alkalommal rendelt Macskajaj pizzát Kuka?
+SELECT COUNT(rendeles.razon) FROM pizza INNER JOIN tetel ON pizza.pazon = tetel.pazon INNER JOIN rendeles ON rendeles.razon = tetel.razon INNER JOIN vevo ON vevo.vazon = rendeles.vazon WHERE pizza.pnev = 'Macskajaj' AND vevo.vnev = 'Kuka';
 	(3)
-	select Count(rendeles.razon) from pizza inner join tetel on pizza.pazon=tetel.pazon inner join rendeles on tetel.razon=rendeles.razon inner join vevo on vevo.vazon=rendeles.vazon where pnev="Macskajaj" and vnev="Kuka";
 12.	Hány darab Macskajaj pizzát rendelt Kuka?
+SELECT SUM(tetel.db) FROM pizza INNER JOIN tetel ON pizza.pazon = tetel.pazon INNER JOIN rendeles ON rendeles.razon = tetel.razon INNER JOIN vevo ON vevo.vazon = rendeles.vazon WHERE pizza.pnev = 'Macskajaj' AND vevo.vnev = 'Kuka';
 	(4)
-	select sum(razon) from rendeles inner join tetel on pizza.pazon=tetel.pazon inner join rendeles on tetel.razon=rendeles.razon inner join vevo on vevo.vazon=rendeles.vazon where vnev="Kuka" and pnev ="Macskajaj";
-13.	Hányszor rendelt pizzát Szende?
+13.	Hányszor rendelt pizzát Szendre?
+SELECT COUNT(rendeles.razon) FROM rendeles INNER JOIN vevo ON rendeles.vazon = vevo.vazon WHERE vevo.vnev = 'Szendre';
 	(3)
 14.	Hány darab Húsimádó pizza fogyott összesen?
+SELECT SUM(tetel.db) FROM tetel INNER JOIN pizza ON pizza.pazon = tetel.pazon WHERE pizza.pnev = 'Húsimádó';
 	(15)
